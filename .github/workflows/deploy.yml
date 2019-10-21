@@ -16,8 +16,8 @@ jobs:
       uses: hmarr/debug-action@master
     
     - name: update deploy status
-    if: always()
-    uses: unacast/actions-github-deployment-status@master
-    with:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
-      status: ${{ job.status }}
+      if: always()
+      uses: unacast/actions-github-deployment-status@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        status: ${{ job.status }}
