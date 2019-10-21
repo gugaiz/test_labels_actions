@@ -1,4 +1,4 @@
-name: deploy on action
+name: deploy
 
 on:
   deployment
@@ -12,4 +12,4 @@ jobs:
       with:
           fetch-depth: 1
     - name: Setup tmate session (debug)
-      uses: hmarr/debug-action
+      uses: hmarr/debug-action@master
