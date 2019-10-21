@@ -1,8 +1,7 @@
 name: deploy
 
 on:
-  pull_request:
-    types: [labeled]
+  deployment
 
 jobs:
   test:
@@ -12,7 +11,13 @@ jobs:
     - uses: actions/checkout@v1
       with:
           fetch-depth: 1
+    
     - name: Setup tmate session (debug)
-      uses: mxschmitt/action-tmate@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: hmarr/debug-action@master
+    
+    - name: update deploy status
+      if: always()
+      uses: unacast/actions-github-deployment-status@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        status: ${{ job.status }}
