@@ -7,17 +7,38 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    steps:
+    steps:  
+    - name: 'deployment pending'
+      uses: 'deliverybot/deployment-status@master'
+      with:
+        state: 'pending'
+        token: '${{ github.token }}'
+
     - uses: actions/checkout@v1
       with:
           fetch-depth: 1
     
-    - name: Setup tmate session (debug)
+    - name: Print env variables (debug)
       uses: hmarr/debug-action@master
-    
-    - name: update deploy status
-      if: always()
-      uses: unacast/actions-github-deployment-status@master
+
+    - name: 'deployment success'
+      if: success()
+      uses: 'deliverybot/deployment-status@master'
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        status: ${{ job.status }}
+        state: 'success'
+        token: '${{ github.token }}'
+        description: 'App deployed to www.example.com'
+
+    - name: 'deployment failure'
+      if: failure()
+      uses: 'deliverybot/deployment-status@master'
+      with:
+        state: 'failure'
+        token: '${{ github.token }}'
+
+        #    - name: update deploy status
+        #if: always()
+        #uses: unacast/actions-github-deployment-status@master
+        #with:
+        #github_token: ${{ secrets.GITHUB_TOKEN }}
+        #status: ${{ job.status }}
