@@ -7,17 +7,17 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v1
-      with:
-          fetch-depth: 1
-   
+    steps:  
     - name: 'deployment pending'
       uses: 'deliverybot/deployment-status@master'
       with:
         state: 'pending'
         token: '${{ github.token }}'
 
+    - uses: actions/checkout@v1
+      with:
+          fetch-depth: 1
+    
     - name: Print env variables (debug)
       uses: hmarr/debug-action@master
 
@@ -27,6 +27,7 @@ jobs:
       with:
         state: 'success'
         token: '${{ github.token }}'
+        description: 'App deployed to www.example.com'
 
     - name: 'deployment failure'
       if: failure()
