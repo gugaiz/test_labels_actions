@@ -4,7 +4,7 @@ on:
   deployment:
     branches: 
       - '**'
-      - '!(master|staging)'
+      - '!master'
 
 jobs:
   test:
