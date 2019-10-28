@@ -1,7 +1,10 @@
 name: deploy
 
 on:
-  deployment
+  deployment:
+    branches: 
+      - '**'
+      - '!(master|staging)'
 
 jobs:
   test:
