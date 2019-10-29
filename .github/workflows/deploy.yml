@@ -23,7 +23,7 @@ jobs:
       uses: hmarr/debug-action@master
 
     - name: Deploy to dev bucket
-      if: startsWith(github.event.deployment.environment, 'pull-request')
+      if: endsWith(github.event.deployment.environment, 'dev.firstleaf.club')
       env:
         TARGET_ADDRESS: https://${{github.event.deployment.payload.user}}.dev.firstleaf.club
         AWS_BUCKET: firstleaf-www-${{github.event.deployment.payload.user}}

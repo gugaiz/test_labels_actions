@@ -7,7 +7,7 @@ review:
   payload:
     user: santi
   # Dynamic environment name. The environment will look like pr123.
-  environment: pull-request-${{ pr }}
+  environment: santi.dev.firstleaf.club
 
 production:
   production_environment: true
