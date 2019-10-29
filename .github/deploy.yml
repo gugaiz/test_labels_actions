@@ -6,5 +6,10 @@ review:
 
   payload:
     user: santi
+    owner: ${{ owner }}
   # Dynamic environment name. The environment will look like pr123.
   environment: pr${{ pr }}
+
+production:
+  production_environment: true
+  enviroment: production
