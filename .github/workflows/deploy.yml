@@ -1,4 +1,4 @@
-name: join('deploy ', github.event.deployment.payload.user)
+name: join('test deploy ', github.event.deployment.payload.user)
 
 on:
   deployment:
