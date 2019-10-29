@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 1
 
     - name: Deploy to production
-      if: (github.event.deployment.environment == "production" && github.event.deployment.production_environment == true)
+      if: (github.event.deployment.environment == 'production' && github.event.deployment.production_environment == true)
       env:
         TARGET_ADDRESS: https://${{github.event.deployment.payload.user}}.dev.firstleaf.club
         AWS_BUCKET: firstleaf-www-${{ toJson(github.event.deployment.payload.user) }}
