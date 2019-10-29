@@ -20,11 +20,6 @@ jobs:
 
     - name: Deploy to production
       if: github.event.deployment.environment == 'production'
-      env:
-        #GITHUB_CONTEXT: ${{ toJson(github) }}
-        #EVENT_VAR: ${{ toJson(github.event) }}
-        #ENVIROMENT_VAR: ${{ toJson(github.event.deployment.environment) }}
-        #USER: ${{ toJson(github.event.deployment.environment) }}
       uses: hmarr/debug-action@master
 
     - name: Deploy to dev bucket
