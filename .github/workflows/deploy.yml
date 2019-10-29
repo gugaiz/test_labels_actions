@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 1
 
     - name: Deploy to production
-      if: ( github.event.deployment.environment == 'production' )
+      if: github.event.deployment.environment == 'production'
       env:
         #GITHUB_CONTEXT: ${{ toJson(github) }}
         #EVENT_VAR: ${{ toJson(github.event) }}
@@ -28,7 +28,7 @@ jobs:
       uses: hmarr/debug-action@master
 
     - name: Deploy to dev bucket
-      if: ( startsWith(github.event.deployment.environment, 'pull-request') )
+      if: startsWith(github.event.deployment.environment, 'pull-request')
       env:
         TARGET_ADDRESS: https://${{github.event.deployment.payload.user}}.dev.firstleaf.club
         AWS_BUCKET: firstleaf-www-${{github.event.deployment.payload.user}}
