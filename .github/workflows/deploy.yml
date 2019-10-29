@@ -18,11 +18,12 @@ jobs:
       with:
           fetch-depth: 1
 
-    - run: echo ${{github.ref}}
+    - name: Env variables
+      uses: hmarr/debug-action@master
 
     - name: Deploy to production
       if: (github.event.deployment.environment == 'production' && github.ref == 'refs/heads/master')
-      uses: hmarr/debug-action@master
+      run: echo "deployed to production"
 
     - name: Deploy to dev bucket
       if: endsWith(github.event.deployment.environment, 'dev.firstleaf.club')
@@ -33,7 +34,7 @@ jobs:
         #EVENT_VAR: ${{ toJson(github.event) }}
         #ENVIROMENT_VAR: ${{ toJson(github.event.deployment.environment) }}
         #USER: ${{ toJson(github.event.deployment.environment) }}
-      uses: hmarr/debug-action@master
+      run: echo 'deployed to ${{ github.event.deployment.payload.user }}'
 
     - name: 'deployment success'
       if: success()
