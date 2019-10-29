@@ -22,7 +22,9 @@ jobs:
       uses: hmarr/debug-action@master
 
     - name: Deploy to production
-      if: (github.event.deployment.environment == 'production' && github.ref == 'refs/heads/master')
+      #github.ref is empty for some reason
+      #if: (github.event.deployment.environment == 'production' && github.ref == 'refs/heads/master')
+      if: github.event.deployment.environment == 'production'
       run: echo "deployed to production"
 
     - name: Deploy to dev bucket
