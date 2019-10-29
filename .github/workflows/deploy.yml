@@ -18,6 +18,8 @@ jobs:
       with:
           fetch-depth: 1
 
+    - run: echo ${{github.ref}}
+
     - name: Deploy to production
       if: (github.event.deployment.environment == 'production' && github.ref == 'refs/heads/master')
       uses: hmarr/debug-action@master
