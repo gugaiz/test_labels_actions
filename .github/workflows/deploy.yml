@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 1
 
     - name: Deploy to production
-      if: (github.event.deployment.environment == 'production')
+      if: github.event.deployment.environment == 'production'
       env:
         #GITHUB_CONTEXT: ${{ toJson(github) }}
         #EVENT_VAR: ${{ toJson(github.event) }}
