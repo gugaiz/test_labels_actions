@@ -2,9 +2,6 @@ name: deploy
 
 on:
   deployment:
-    branches: 
-      - '**'
-      - '!master'
 
 jobs:
   test:
