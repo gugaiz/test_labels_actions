@@ -1,4 +1,4 @@
-name: deploy-${{github.event.deployment.environment}}
+name: join( 'deploy ', github.event.deployment.environment )
 
 on:
   deployment:
