@@ -7,7 +7,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    steps:  
+    steps:
     - name: 'deployment pending'
       uses: 'deliverybot/deployment-status@master'
       with:
@@ -17,8 +17,11 @@ jobs:
     - uses: actions/checkout@v1
       with:
           fetch-depth: 1
-    
+
     - name: Print env variables (debug)
+      env:
+        TARGET_ADDRESS: https://{{github.GITHUB_ACTOR}}.dev.firstleaf.club
+        AWS_BUCKET: firstleaf-www-{{github.GITHUB_ACTOR}}
       uses: hmarr/debug-action@master
 
     - name: 'deployment success'
