@@ -20,10 +20,11 @@ jobs:
 
     - name: Print env variables (debug)
       env:
-        TARGET_ADDRESS: https://{{github.actor}}.dev.firstleaf.club
+        TARGET_ADDRESS: https://${{github.actor}}.dev.firstleaf.club
         GITHUB_CONTEXT: ${{ toJson(github) }}
         EVENT_VAR: ${{ toJson(github.event) }}
-        AWS_BUCKET: firstleaf-www-{{github.actor}}
+        ENVIROMENT_VAR: ${{ toJson(github.event.deployment.environment) }}
+        AWS_BUCKET: firstleaf-www-${{github.actor}}
       uses: hmarr/debug-action@master
 
     - name: 'deployment success'
