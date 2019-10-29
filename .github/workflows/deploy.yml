@@ -1,4 +1,4 @@
-name: deploy
+name: deploy ${{ github.event.deployment.environment }}
 
 on:
   deployment:
