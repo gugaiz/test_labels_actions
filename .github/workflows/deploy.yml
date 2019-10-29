@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 1
 
     - name: Deploy to production
-      if: github.event.deployment.environment == 'production'
+      if: (github.event.deployment.environment == 'production' && github.ref == 'refs/heads/master')
       uses: hmarr/debug-action@master
 
     - name: Deploy to dev bucket
