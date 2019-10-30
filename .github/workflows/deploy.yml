@@ -21,11 +21,14 @@ jobs:
     - name: Env variables
       uses: hmarr/debug-action@master
 
+    - name: Echo ref num
+      run: echo `git show-ref -s refs/heads/master`
+
     - name: Deploy to production
       #github.ref is empty for some reason
       #if: (github.event.deployment.environment == 'production' && github.ref == 'refs/heads/master')
-      if: github.event.deployment.environment == 'production'
-      run: echo "deployed to production"
+      if: github.event.deployment.environment == `git show-ref -s refs/heads/master`
+      run: echo "Deployed to production"
 
     - name: Deploy to dev bucket
       if: endsWith(github.event.deployment.environment, 'dev.firstleaf.club')
