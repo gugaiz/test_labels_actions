@@ -22,7 +22,12 @@ jobs:
       uses: hmarr/debug-action@master
 
     - name: Echo ref num
-      run: echo `git show-ref -s refs/heads/master`
+      run: |
+        echo `git show-ref -s refs/heads/master`
+        echo $GITHUB_SHA
+
+    - name: Debug session
+      uses: mxschmitt/action-tmate@v1 
 
     - name: Deploy to production
       #github.ref is empty for some reason
