@@ -23,18 +23,18 @@ jobs:
 
     - name: Echo ref num
       run: |
-        echo `git show-ref -s refs/heads/master`
+        echo `git show-ref -s master`
         echo $GITHUB_SHA
 
-    - name: Debug session
-      uses: mxschmitt/action-tmate@v1 
+    #- name: Debug session
+    #  uses: mxschmitt/action-tmate@v1 
 
     - name: Deploy to production
       #github.ref is empty for some reason
       #if: (github.event.deployment.environment == 'production' && github.ref == 'refs/heads/master')
       if: github.event.deployment.environment == 'production'
       run: |
-        [ $GITHUB_SHA == `git show-ref -s refs/heads/master` ] || exit 1 && echo "depoyed to" && echo "production"
+        [ $GITHUB_SHA == `git show-ref -s master` ] || exit 1 && echo "depoyed to" && echo "production"
 
     - name: Deploy to dev bucket
       if: endsWith(github.event.deployment.environment, 'dev.firstleaf.club')
