@@ -28,7 +28,8 @@ jobs:
       #github.ref is empty for some reason
       #if: (github.event.deployment.environment == 'production' && github.ref == 'refs/heads/master')
       if: github.event.deployment.environment == 'production'
-      run: [ $GITHUB_SHA == `git show-ref -s refs/heads/master` ] || exit 1 && echo "depoyed to" && echo "production"
+      run: |
+        [ $GITHUB_SHA == `git show-ref -s refs/heads/master` ] || exit 1 && echo "depoyed to" && echo "production"
 
     - name: Deploy to dev bucket
       if: endsWith(github.event.deployment.environment, 'dev.firstleaf.club')
