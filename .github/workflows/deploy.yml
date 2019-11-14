@@ -1,8 +1,7 @@
 name: deploy
 
 on:
-  - deployment
-  - repository_dispatch
+  deployment:
 
 jobs:
   test:
