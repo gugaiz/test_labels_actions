@@ -11,12 +11,14 @@ jobs:
       - name: "Setup ruby"
         uses: ruby/setup-ruby@v1
       - name: Echo ref num
+        env:
+          GITHUB_REF: master
         run: |
           echo `git show-ref -s master`
           echo $GITHUB_SHA
           echo $GITHUB_REF
-      - name: Env variables
-        uses: hmarr/debug-action@master
+      #- name: Env variables
+      #  uses: hmarr/debug-action@master
       - uses: actions/cache@v2
         env:
           GITHUB_REF: master
