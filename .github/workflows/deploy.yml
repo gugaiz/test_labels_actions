@@ -18,6 +18,8 @@ jobs:
       - name: Env variables
         uses: hmarr/debug-action@master
       - uses: actions/cache@v2
+        env:
+          GITHUB_REF: master
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-${{ hashFiles('**/Gemfile.lock') }}
