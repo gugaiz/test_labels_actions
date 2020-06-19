@@ -25,9 +25,10 @@ jobs:
           RefKey: master
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-
+          #key: ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-${{ hashFiles('**/Gemfile.lock') }}
+          key: master-cache
+          #restore-keys: |
+          #  ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-
       # Debug console
       #- name: Setup tmate session (debug)
       #  uses: mxschmitt/action-tmate@v1
