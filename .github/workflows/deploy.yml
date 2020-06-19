@@ -16,6 +16,7 @@ jobs:
         run: |
           echo `git show-ref -s master`
           echo $GITHUB_SHA
+          echo $GITHUB_REF
           echo $RefKey
       #- name: Env variables
       #  uses: hmarr/debug-action@master
