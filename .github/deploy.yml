@@ -1,3 +1,6 @@
 production:
-  production_environment: true
+  transient_environment: true
+  production_environment: false
+  payload:
+    user: test
   environment: production
