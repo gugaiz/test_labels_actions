@@ -5,8 +5,7 @@ on:
     inputs:
       beanstalk-env:
         description: Beanstalk Env
-        default: ${{ secrets.BEANSTALK_ENV }}
-        required: true
+        required: false
 
 jobs:
   tests:
@@ -22,7 +21,7 @@ jobs:
           echo `git show-ref -s master`
           echo $GITHUB_SHA
           echo $GITHUB_REF
-          echo ${{ github.event.inputs.beanstalk-env }}
+          echo ${{ github.event.inputs.beanstalk-env:-test }}
       #- name: Setup tmate session
       #  uses: mxschmitt/action-tmate@v2
       - name: Env variables
