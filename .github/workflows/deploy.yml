@@ -21,11 +21,10 @@ jobs:
           echo `git show-ref -s master`
           echo $GITHUB_SHA
           echo $GITHUB_REF
-          echo ${{ github.event.inputs.beanstalk-env:-test }}
-      #- name: Setup tmate session
-      #  uses: mxschmitt/action-tmate@v2
       - name: Env variables
         uses: hmarr/debug-action@master
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v2
       - uses: actions/cache@v2
         env:
           RefKey: master
