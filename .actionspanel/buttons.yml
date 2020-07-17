@@ -1,0 +1,4 @@
+buttons:
+  - title: Run deploy
+    action: "Deploy"
+    description: deploy to production
