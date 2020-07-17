@@ -15,7 +15,3 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           event_type: deployment
-          message: |
-            {
-              "beanstalk-env": ${{ github.event.inputs.beanstalk-env }}
-            }
