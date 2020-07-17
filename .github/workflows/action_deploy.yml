@@ -6,15 +6,16 @@ on:
       beanstalk-env:
         description: Beanstalk Env
         required: false
-
 jobs:
   deploy:
-    - name: Dispatch deployment
-      uses: mvasigh/dispatch-action@main
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        event_type: deployment
-        variables: |
-          {
-            "beanstalk-env": ${{ github.event.inputs.beanstalk-env }}
-          }
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch deployment
+        uses: mvasigh/dispatch-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event_type: deployment
+          variables: |
+            {
+              "beanstalk-env": ${{ github.event.inputs.beanstalk-env }}
+            }
