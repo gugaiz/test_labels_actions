@@ -22,7 +22,7 @@ jobs:
           echo `git show-ref -s master`
           echo $GITHUB_SHA
           echo $GITHUB_REF
-          echo ${{ github.event.client_payload.variables.beanstalk-env || secrets.BEANSTALK_ENV }}
+          echo ${{ github.event.client_payload.message.beanstalk-env || secrets.BEANSTALK_ENV }}
 
       - name: Env variables
         uses: hmarr/debug-action@master
