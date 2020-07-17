@@ -1,4 +1,4 @@
-name: Deploy
+name: deliver deploy
 
 on:
   workflow_dispatch:
