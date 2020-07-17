@@ -36,6 +36,13 @@ jobs:
           key: master-cache
           #restore-keys: |
           #  ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-
+      - name: update deploy status
+        if: always()
+        uses: unacast/actions-github-deployment-status@v0.3.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        status: ${{ job.status }}
+        description: "The description to create. Restricted to 140 chars"
       # Debug console
       #- name: Setup tmate session (debug)
       #  uses: mxschmitt/action-tmate@v1
