@@ -1,0 +1,20 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      beanstalk-env:
+        description: Beanstalk Env
+        required: false
+
+jobs:
+  deploy:
+    - name: Dispatch deployment
+      uses: mvasigh/dispatch-action@main
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        event_type: deployment
+        variables: |
+          {
+            "beanstalk-env": ${{ github.event.inputs.beanstalk-env }}
+          }
