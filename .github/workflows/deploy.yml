@@ -18,10 +18,12 @@ jobs:
       - name: Echo ref num
         env:
           RefKey: master
+          VERSION: ${{ github.sha }}
         run: |
           echo `git show-ref -s master`
           echo $GITHUB_SHA
           echo $GITHUB_REF
+          echo $VERSION
           echo ${{ github.event.client_payload.message.beanstalk-env || secrets.BEANSTALK_ENV }}
 
       - name: Env variables
