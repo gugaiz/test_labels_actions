@@ -1,0 +1,17 @@
+name: deliver deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      beanstalk-env:
+        description: Beanstalk Env
+        required: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch deployment
+        uses: mvasigh/dispatch-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event_type: deployment

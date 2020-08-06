@@ -1,70 +1,48 @@
-name: deploy
+name: Deploy
 
 on:
-  deployment:
+  deployment
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
-
     steps:
-    - name: 'deployment pending'
-      uses: 'deliverybot/deployment-status@master'
-      with:
-        state: 'pending'
-        token: '${{ github.token }}'
+      - name: 'deployment pending'
+        uses: 'deliverybot/deployment-status@master'
+        with:
+          state: 'pending'
+          token: '${{ github.token }}'
+      - uses: actions/checkout@v2
+      - name: "Setup ruby"
+        uses: ruby/setup-ruby@v1
+      - name: Echo ref num
+        env:
+          RefKey: master
+          VERSION: ${{ github.sha }}
+        run: |
+          echo `git show-ref -s master`
+          echo $GITHUB_SHA
+          echo $GITHUB_REF
+          echo $VERSION
+          echo ${{ github.event.client_payload.message.beanstalk-env || secrets.BEANSTALK_ENV }}
 
-    - uses: actions/checkout@v1
-      with:
-          fetch-depth: 1
-
-    - name: Env variables
-      uses: hmarr/debug-action@master
-
-    - name: Echo ref num
-      run: |
-        echo `git show-ref -s master`
-        echo $GITHUB_SHA
-
-    #- name: Debug session
-    #  uses: mxschmitt/action-tmate@v1 
-
-    - name: Deploy to production
-      #github.ref is empty for some reason
-      #if: (github.event.deployment.environment == 'production' && github.ref == 'refs/heads/master')
-      if: github.event.deployment.environment == 'production'
-      run: |
-        [ $GITHUB_SHA == `git show-ref -s master` ] || exit 1 && echo "depoyed to" && echo "production"
-
-    - name: Deploy to dev bucket
-      if: endsWith(github.event.deployment.environment, 'dev.firstleaf.club')
-      env:
-        TARGET_ADDRESS: https://${{github.event.deployment.payload.user}}.dev.firstleaf.club
-        AWS_BUCKET: firstleaf-www-${{github.event.deployment.payload.user}}
-        #GITHUB_CONTEXT: ${{ toJson(github) }}
-        #EVENT_VAR: ${{ toJson(github.event) }}
-        #ENVIROMENT_VAR: ${{ toJson(github.event.deployment.environment) }}
-        #USER: ${{ toJson(github.event.deployment.environment) }}
-      run: echo 'deployed to ${{ github.event.deployment.payload.user }}'
-
-    - name: 'deployment success'
-      if: success()
-      uses: 'deliverybot/deployment-status@master'
-      with:
-        state: 'success'
-        token: '${{ github.token }}'
-        description: 'App deployed to www.example.com'
-
-    - name: 'deployment failure'
-      if: failure()
-      uses: 'deliverybot/deployment-status@master'
-      with:
-        state: 'failure'
-        token: '${{ github.token }}'
-
-        #    - name: update deploy status
-        #if: always()
-        #uses: unacast/actions-github-deployment-status@master
-        #with:
-        #github_token: ${{ secrets.GITHUB_TOKEN }}
-        #status: ${{ job.status }}
+      - name: Env variables
+        uses: hmarr/debug-action@master
+      #- name: Setup tmate session
+      #uses: mxschmitt/action-tmate@v2
+      - uses: actions/cache@v2
+        env:
+          RefKey: master
+        with:
+          path: vendor/bundle
+          #key: ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-${{ hashFiles('**/Gemfile.lock') }}
+          key: master-cache
+          #restore-keys: |
+          #  ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-
+      - name: 'deployment success'
+        if: success()
+        uses: 'deliverybot/deployment-status@master'
+        with:
+          state: 'success'
+          token: '${{ github.token }}'
+          description: 'App deployed'
