@@ -4,3 +4,9 @@ production:
   payload:
     user: test
   environment: production
+staging:
+ transient_environment: true
+ production_environment: false
+ payload:
+   user: test
+ environment: staging
