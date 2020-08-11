@@ -4,6 +4,7 @@ production:
   payload:
     user: test
   environment: production
+  ref: master
 staging:
  transient_environment: true
  production_environment: false
