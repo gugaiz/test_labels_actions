@@ -9,7 +9,7 @@ on:
       beanstalk_env:
         description: Beanstalk Environment
         required: false
-        default: secrets.ENVIRONMENT_PRODUCTION_NAME  
+        default: ${{ secrets.ENVIRONMENT_PRODUCTION_NAME }}
 jobs:
   deploy:
     runs-on: ubuntu-latest
