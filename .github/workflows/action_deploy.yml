@@ -11,12 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test input
-        with:
-          BEANSTALK_WITH: ${{ github.event.inputs.logLevel }}
         env:
           BEANSTALK: ${{ github.event.inputs.logLevel }} 
         run: |
-          echo "testing input: ${{ github.event.inputs.logLevel }}"
+          echo "testing input: ${{ github.event.inputs.beanstalk-env }}"
           echo "print env $INPUT_BEANSTALK-ENV"
           echo "print preset env $BEANSTALK"
           echo $GITHUB_REF
