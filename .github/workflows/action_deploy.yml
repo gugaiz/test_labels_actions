@@ -53,9 +53,10 @@ jobs:
           route: POST /repos/:repository/deployments/:deployment/statuses
           repository: ${{ github.repository }}
           deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-          environment: $ENVIRONMENT
+          environment: ${{ env.ENVIRONMENT }}
           environment_url: https://example.com
           production_environment: ${{ contains(github.ref,'master') }}
+          owner: ${{ github.actor }}
           log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           state: in_progress
           mediaType: '{"previews": ["flash", "ant-man"]}'
@@ -76,9 +77,10 @@ jobs:
           route: POST /repos/:repository/deployments/:deployment/statuses
           repository: ${{ github.repository }}
           deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-          environment: $ENVIRONMENT
+          environment: ${{ env.ENVIRONMENT }}
           environment_url: https://example.com
           production_environment: ${{ contains(github.ref,'master') }}
+          owner: ${{ github.actor }}
           log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           mediaType: '{"previews": ["ant-man"]}'
           state: success
@@ -93,11 +95,12 @@ jobs:
           route: POST /repos/:repository/deployments/:deployment/statuses
           repository: ${{ github.repository }}
           deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-          environment: $ENVIRONMENT
           environment_url: https://example.com
+          environment: ${{ env.ENVIRONMENT }}
           production_environment: ${{ contains(github.ref,'master') }}
           log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           mediaType: '{"previews": ["ant-man"]}'
+          owner: ${{ github.actor }}
           state: failure
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
