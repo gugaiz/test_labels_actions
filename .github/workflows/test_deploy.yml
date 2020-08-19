@@ -44,6 +44,7 @@ jobs:
       - uses: avakar/set-deployment-status@v1
         with:
           state: in_progress
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
