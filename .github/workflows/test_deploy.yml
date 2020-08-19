@@ -33,12 +33,13 @@ jobs:
           echo "::set-env name=ENVIRONMENT::staging"
 
       - name: Create GitHub deployment
-        uses: chrnorm/deployment-action@releases/v1
+        uses: avakar/create-deployment@v1
         id: deployment
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target_url: http://my-app-url.com
+          auto_merge: false
           environment: ${{ env.ENVIRONMENT }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         
       - name: Update deploy status
         if: always()
