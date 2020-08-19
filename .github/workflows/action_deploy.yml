@@ -15,7 +15,7 @@ jobs:
       - name: Test input
         env:
           BEANSTALK: ${{ github.event.inputs.beanstalk_env }} 
-          TEST: contains(github.ref,'master') 
+          TEST: ${{ contains(github.ref,'master') }}
         run: |
           echo "testing input: ${{ github.event.inputs.beanstalk_env }}"
           echo "print preset env $BEANSTALK"
