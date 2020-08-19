@@ -18,15 +18,15 @@ jobs:
           echo "testing input: ${{ github.event.inputs.beanstalk_env }}"
           echo "print preset env $BEANSTALK"
           echo $GITHUB_REF
-      
-      - name: create deployment
+
+      - name: Create deployment
         id: create_deployment
         uses: octokit/request-action@v2.x
         with:
           route: POST /repos/:repository/deployments
           repository: ${{ github.repository }}
-          ref: ${{ fromJson(steps.get_pull_request_ref.outputs.data).head.ref }}
-          environment: dev
+          ref: ${{ github.ref }}
+          environment: production
           auto_merge: false
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
