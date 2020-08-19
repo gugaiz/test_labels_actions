@@ -38,6 +38,7 @@ jobs:
         with:
           auto_merge: false
           environment: ${{ env.ENVIRONMENT }}
+          payload: "{ 'user': ${{ github.actor }} }"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
