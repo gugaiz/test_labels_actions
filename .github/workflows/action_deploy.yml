@@ -41,6 +41,7 @@ jobs:
           ref: ${{ github.ref }}
           environment: ${{ env.ENVIRONMENT }}
           production_environment: ${{ contains(github.ref,'master') }}
+          owner: ${{ github.actor }}
           auto_merge: false
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
