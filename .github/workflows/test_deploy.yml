@@ -1,4 +1,4 @@
-name: deliver deploy
+name: test action
 
 on:
   workflow_dispatch:
