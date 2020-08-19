@@ -10,8 +10,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch deployment
-        uses: mvasigh/dispatch-action@main
+      - name: Test input
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          event_type: deployment
+          BEANSTALK_WITH: ${{ github.event.inputs.logLevel }}
+        env:
+          BEANSTALK: ${{ github.event.inputs.logLevel }} 
+        run: |
+          echo "testing input: ${{ github.event.inputs.logLevel }}"
+          echo "print env $INPUT_BEANSTALK-ENV"
+          echo "print preset env $BEANSTALK"
+          echo $GITHUB_REF
