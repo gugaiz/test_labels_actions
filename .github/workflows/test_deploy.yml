@@ -40,18 +40,23 @@ jobs:
           environment: ${{ env.ENVIRONMENT }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-      - name: Update deploy status
-        if: always()
-        uses: unacast/actions-github-deployment-status@v0.3.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          status: ${{ job.status }}
-          description: "Testing deployment"
       
+      - uses: avakar/set-deployment-status@v1
+        with:
+          state: in_progress
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: deploy the pull request
         run: |
           # deployment logic goes here
           sleep 10
           # instead we randomly succeed or fail the deployment
           exit $(( $RANDOM % 10 >= 5 ))
+      
+      - uses: avakar/set-deployment-status@v1
+        if: always()
+        with:
+          state: ${{ success() }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
