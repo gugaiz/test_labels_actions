@@ -3,9 +3,10 @@ name: deliver deploy
 on:
   workflow_dispatch:
     inputs:
-      beanstalk-env:
-        description: Beanstalk Env
+      beanstalk_env:
+        description: Beanstalk Environment
         required: false
+        default: 'firstleaf-production'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -14,7 +15,7 @@ jobs:
         env:
           BEANSTALK: ${{ github.event.inputs.logLevel }} 
         run: |
-          echo "testing input: ${{ github.event.inputs.beanstalk-env }}"
-          echo "print env $INPUT_BEANSTALK-ENV"
+          echo "testing input: ${{ github.event.inputs.beanstalk_env }}"
+          echo "print env $INPUT_BEANSTALK_ENV"
           echo "print preset env $BEANSTALK"
           echo $GITHUB_REF
