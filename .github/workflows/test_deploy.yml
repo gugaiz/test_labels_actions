@@ -39,7 +39,7 @@ jobs:
           auto_merge: false
           environment: ${{ env.ENVIRONMENT }}
         env:
-          GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Update deploy status
         if: always()
