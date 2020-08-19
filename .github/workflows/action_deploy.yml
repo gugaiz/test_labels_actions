@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Test input
         env:
-          BEANSTALK: ${{ github.event.inputs.logLevel }} 
+          BEANSTALK: ${{ github.event.inputs.beanstalk_env }} 
         run: |
           echo "testing input: ${{ github.event.inputs.beanstalk_env }}"
           echo "print env $INPUT_BEANSTALK_ENV"
