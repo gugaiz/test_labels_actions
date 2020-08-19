@@ -41,7 +41,7 @@ jobs:
           ref: ${{ github.ref }}
           environment: ${{ env.ENVIRONMENT }}
           production_environment: ${{ contains(github.ref,'master') }}
-          owner: ${{ github.actor }}
+          user: ${{ github.actor }}
           auto_merge: false
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
@@ -56,7 +56,7 @@ jobs:
           environment: ${{ env.ENVIRONMENT }}
           environment_url: https://example.com
           production_environment: ${{ contains(github.ref,'master') }}
-          owner: ${{ github.actor }}
+          user: ${{ github.actor }}
           log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           state: in_progress
           mediaType: '{"previews": ["flash", "ant-man"]}'
@@ -80,7 +80,7 @@ jobs:
           environment: ${{ env.ENVIRONMENT }}
           environment_url: https://example.com
           production_environment: ${{ contains(github.ref,'master') }}
-          owner: ${{ github.actor }}
+          user: ${{ github.actor }}
           log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           mediaType: '{"previews": ["ant-man"]}'
           state: success
@@ -100,7 +100,7 @@ jobs:
           production_environment: ${{ contains(github.ref,'master') }}
           log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           mediaType: '{"previews": ["ant-man"]}'
-          owner: ${{ github.actor }}
+          user: ${{ github.actor }}
           state: failure
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
