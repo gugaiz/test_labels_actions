@@ -4,21 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       git_ref:
-        description: Git Ref (Optional)
-        required: false
+        description: Git branch
+        required: true
+        default: 'master'
       beanstalk_env:
         description: Beanstalk Environment
         required: false
-        default: ${{ secrets.ENVIRONMENT_PRODUCTION_NAME }}
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Clone Repository (latest)'
-        if: github.event.inputs.git_ref == ''
-        uses: actions/checkout@v2
-      - name: 'Clone Repository (custom ref)'
-        if: github.event.inputs.git_ref != ''
+      - name: 'Clone Repository'
         with:
           ref: ${{ github.event.inputs.git_ref }} 
         uses: actions/checkout@v2
