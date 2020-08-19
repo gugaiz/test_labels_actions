@@ -3,10 +3,6 @@ name: deliver deploy
 on:
   workflow_dispatch:
     inputs:
-      git_ref:
-        description: Git branch
-        required: true
-        default: 'master'
       beanstalk_env:
         description: Beanstalk Environment
         required: false
@@ -15,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Clone Repository'
-        with:
-          ref: ${{ github.event.inputs.git_ref }} 
         uses: actions/checkout@v2
       - name: Test input
         env:
