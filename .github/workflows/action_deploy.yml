@@ -39,7 +39,7 @@ jobs:
           route: POST /repos/:repository/deployments
           repository: ${{ github.repository }}
           ref: ${{ github.ref }}
-          environment: $ENVIRONMENT
+          environment: ${{ jobs.deploy.env.ENVIRONMENT }}
           production_environment: ${{ contains(github.ref,'master') }}
           auto_merge: false
         env:
