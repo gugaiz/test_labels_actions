@@ -57,6 +57,6 @@ jobs:
       - uses: avakar/set-deployment-status@v1
         if: always()
         with:
-          state: ${{ job.status() }}
+          state: ${{ job.status }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
