@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened]
   issue_comment:
-    types: [created]
+    types: [created, edited, deleted]
 
 jobs:
   deploy:
@@ -13,7 +13,7 @@ jobs:
       - uses: khan/pull-request-comment-trigger@master
         id: check
         with:
-          trigger: '/deploy'
+          trigger: '$deploy'
           reaction: rocket
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
