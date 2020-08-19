@@ -16,6 +16,5 @@ jobs:
           BEANSTALK: ${{ github.event.inputs.beanstalk_env }} 
         run: |
           echo "testing input: ${{ github.event.inputs.beanstalk_env }}"
-          echo "print env $INPUT_BEANSTALK_ENV"
           echo "print preset env $BEANSTALK"
           echo $GITHUB_REF
