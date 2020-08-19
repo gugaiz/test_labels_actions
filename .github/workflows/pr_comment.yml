@@ -1,8 +1,8 @@
 name: pr comment
 
 on:
-  #  pull_request:
-  #  types: [opened]
+  pull_request:
+    types: [opened]
   issue_comment:
     types: [created, edited, deleted]
 
@@ -13,7 +13,7 @@ jobs:
       - uses: khan/pull-request-comment-trigger@master
         id: check
         with:
-          trigger: '$deploy'
+          trigger: '/deploy'
           reaction: rocket
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
