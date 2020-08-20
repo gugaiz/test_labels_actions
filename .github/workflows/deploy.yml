@@ -6,14 +6,14 @@ on:
       beanstalk_env:
         description: Beanstalk environment (Optional - leave it blank to deploy to production)
         required: false
-      run_tests: 
-        description: "Run tests (ignored on master branch)"
+      skip_tests: 
+        description: "Skip tests (ignored on master branch)"
         required: true
-        default: true
+        default: false
       
 jobs:
   tests:
-    if: ${{ github.ref == 'refs/heads/master' || github.event.inputs.run_tests == 'false' }}
+    if: ${{ github.ref == 'refs/heads/master' || github.event.inputs.skip_tests == 'false' }}
     runs-on: ubuntu-latest
 
     services:
