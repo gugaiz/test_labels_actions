@@ -9,7 +9,7 @@ on:
       skip_tests: 
         description: "Skip tests (ignored on master branch)"
         required: true
-        default: false
+        default: 'false'
       
 jobs:
   tests:
