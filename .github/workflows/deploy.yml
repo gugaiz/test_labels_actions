@@ -53,7 +53,6 @@ jobs:
           bundle exec rails db:test:prepare
           bundle exec rake
   deploy:
-    needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Clone Repository
