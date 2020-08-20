@@ -15,10 +15,22 @@ jobs:
       - name: Test input
         env:
           BEANSTALK: ${{ github.event.inputs.beanstalk_env }} 
+          TEST: ${{ !contains(github.ref,'master') }}
         run: |
           echo "testing input: ${{ github.event.inputs.beanstalk_env }}"
           echo "print preset env $BEANSTALK"
           echo $GITHUB_REF
+          echo "test $TEST"
+
+      - name: Set environment to production
+        if: ${{ contains(github.ref,'master') }}
+        run: |
+          echo "::set-env name=ENVIRONMENT::production"
+      
+      - name: Set enviroment to staging
+        if: ${{ !contains(github.ref,'master') }}
+        run: |
+          echo "::set-env name=ENVIRONMENT::staging"
 
       - name: Create deployment
         id: create_deployment
@@ -27,7 +39,9 @@ jobs:
           route: POST /repos/:repository/deployments
           repository: ${{ github.repository }}
           ref: ${{ github.ref }}
-          environment: production
+          environment: ${{ env.ENVIRONMENT }}
+          production_environment: ${{ contains(github.ref,'master') }}
+          user: ${{ github.actor }}
           auto_merge: false
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
@@ -39,8 +53,10 @@ jobs:
           route: POST /repos/:repository/deployments/:deployment/statuses
           repository: ${{ github.repository }}
           deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-          environment: dev
+          environment: ${{ env.ENVIRONMENT }}
           environment_url: https://example.com
+          production_environment: ${{ contains(github.ref,'master') }}
+          user: ${{ github.actor }}
           log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           state: in_progress
           mediaType: '{"previews": ["flash", "ant-man"]}'
@@ -61,8 +77,10 @@ jobs:
           route: POST /repos/:repository/deployments/:deployment/statuses
           repository: ${{ github.repository }}
           deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-          environment: dev
+          environment: ${{ env.ENVIRONMENT }}
           environment_url: https://example.com
+          production_environment: ${{ contains(github.ref,'master') }}
+          user: ${{ github.actor }}
           log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           mediaType: '{"previews": ["ant-man"]}'
           state: success
@@ -77,10 +95,12 @@ jobs:
           route: POST /repos/:repository/deployments/:deployment/statuses
           repository: ${{ github.repository }}
           deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-          environment: dev
           environment_url: https://example.com
+          environment: ${{ env.ENVIRONMENT }}
+          production_environment: ${{ contains(github.ref,'master') }}
           log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           mediaType: '{"previews": ["ant-man"]}'
+          user: ${{ github.actor }}
           state: failure
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

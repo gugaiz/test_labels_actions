@@ -1,0 +1,57 @@
+name: test action
+
+on:
+  workflow_dispatch:
+    inputs:
+      beanstalk_env:
+        description: Beanstalk Environment
+        required: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Clone Repository'
+        uses: actions/checkout@v2
+      - name: Test input
+        env:
+          BEANSTALK: ${{ github.event.inputs.beanstalk_env }} 
+          TEST: ${{ github.ref == 'refs/heads/master' }}
+        run: |
+          echo "testing input: ${{ github.event.inputs.beanstalk_env }}"
+          echo "print preset env $BEANSTALK"
+          echo $GITHUB_REF
+          echo "test $TEST"
+
+      - name: Set environment to production
+        if: ${{ github.ref == 'refs/heads/master' }}
+        run: |
+          echo "::set-env name=ENVIRONMENT::production"
+      
+      - name: Set enviroment to staging
+        if: ${{ github.ref != 'refs/heads/master' }}
+        run: |
+          echo "::set-env name=ENVIRONMENT::staging"
+
+      - name: start deployment
+        uses: bobheadxi/deployments@master
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ env.ENVIRONMENT }}
+
+      - name: deploy the pull request
+        run: |
+          # deployment logic goes here
+          sleep 20
+          # instead we randomly succeed or fail the deployment
+          exit $(( $RANDOM % 10 >= 5 ))
+     
+      - name: update deployment status
+        uses: bobheadxi/deployments@master
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}

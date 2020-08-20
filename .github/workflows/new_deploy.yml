@@ -1,4 +1,4 @@
-name: deploy action
+name: New deploy
 
 on:
   workflow_dispatch:
@@ -7,9 +7,9 @@ on:
         description: Beanstalk environment (Optional - leave it blank to deploy to production)
         required: false
       run_tests: 
-        description: "Run tests (ignored on master branch: 1 = true, 0 = false)"
+        description: Run tests (ignored on master branch)
         required: true
-        default: 1
+        default: true
       
 jobs:
   tests:
