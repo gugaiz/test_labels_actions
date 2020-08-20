@@ -1,48 +1,124 @@
-name: Deploy
+name: deploy action
 
 on:
-  deployment
-
+  workflow_dispatch:
+    inputs:
+      beanstalk_env:
+        description: Beanstalk environment (Optional - leave it blank to deploy to production)
+        required: false
+      run_tests: 
+        description: Run tests (ignored on master branch)
+        required: true
+        default: true
+      
 jobs:
   tests:
+    if: ${{ github.ref == 'refs/heads/master' || github.event.inputs.run_tests }}
     runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:11-alpine
+        ports: ['5432:5432']
+        env:
+          POSTGRES_PASSWORD: penrose
+          POSTGRES_USER: penrose
+          POSTGRES_DB: penrose_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 2s
+          --health-timeout 1s
+          --health-retries 5
+
     steps:
-      - name: 'deployment pending'
-        uses: 'deliverybot/deployment-status@master'
-        with:
-          state: 'pending'
-          token: '${{ github.token }}'
       - uses: actions/checkout@v2
       - name: "Setup ruby"
         uses: ruby/setup-ruby@v1
-      - name: Echo ref num
-        env:
-          RefKey: master
-          VERSION: ${{ github.sha }}
-        run: |
-          echo `git show-ref -s master`
-          echo $GITHUB_SHA
-          echo $GITHUB_REF
-          echo $VERSION
-          echo ${{ github.event.client_payload.message.beanstalk-env || secrets.BEANSTALK_ENV }}
-
-      - name: Env variables
-        uses: hmarr/debug-action@master
-      #- name: Setup tmate session
-      #uses: mxschmitt/action-tmate@v2
       - uses: actions/cache@v2
-        env:
-          RefKey: master
         with:
           path: vendor/bundle
-          #key: ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-${{ hashFiles('**/Gemfile.lock') }}
-          key: master-cache
-          #restore-keys: |
-          #  ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-
-      - name: 'deployment success'
-        if: success()
-        uses: 'deliverybot/deployment-status@master'
+          key: ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-${{ hashFiles('.ruby-version') }}-
+      - name: Build and test with rake
+        env:
+          RAILS_ENV: test
+        run: |
+          sudo apt-get -yqq install libpq-dev
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+          bundle exec rails db:migrate
+          bundle exec rails db:test:prepare
+          bundle exec rake
+  deploy:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v2
+
+      - name: Set environment to production
+        if: ${{ github.ref == 'refs/heads/master' }}
+        run: |
+          echo "::set-env name=ENVIRONMENT::production"
+
+      - name: Set enviroment to staging
+        if: ${{ github.ref != 'refs/heads/master' }}
+        run: |
+          echo "::set-env name=ENVIRONMENT::staging"
+
+      - name: Start deployment
+        uses: bobheadxi/deployments@v0.4.2
+        id: deployment
         with:
-          state: 'success'
-          token: '${{ github.token }}'
-          description: 'App deployed'
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ env.ENVIRONMENT }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploying to production
+        if: ${{ github.ref == 'refs/heads/master' }}
+        uses: hmanzur/actions-aws-eb@v1.0.0
+        with:
+          command: 'deploy ${{ github.event.inputs.beanstalk_env || secrets.ENVIRONMENT_PRODUCTION_NAME }}'
+
+      - name: Deploying to staging
+        if: ${{ github.ref != 'refs/heads/master' && github.event.inputs.beanstalk_env != env.ENVIRONMENT_PRODUCTION_NAME }}
+        uses: hmanzur/actions-aws-eb@v1.0.0
+        env: 
+          ENVIRONMENT_PRODUCTION_NAME: ${{ secrets.ENVIRONMENT_PRODUCTION_NAME }} 
+        with:
+          command: 'deploy ${{ github.event.inputs.beanstalk_env || secrets.ENVIRONMENT_STAGING_NAME }} --timeout 15'
+
+      - name: update deployment status
+        uses: bobheadxi/deployments@v0.4.2
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+  sentry:
+    needs: deploy
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: "Release version"
+      uses: dmandrade/sentry-release-github-action@v1
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: 'penrose-hill'
+        SENTRY_PROJECT: 'solidus'
+      with:
+        environment: 'production'
+        version: ${{ github.sha }}
