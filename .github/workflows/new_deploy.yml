@@ -91,8 +91,10 @@ jobs:
           command: 'deploy ${{ github.event.inputs.beanstalk_env || secrets.ENVIRONMENT_PRODUCTION_NAME }}'
 
       - name: Deploying to staging
-        if: ${{ github.ref != 'refs/heads/master' && github.event.inputs.beanstalk_env != secrets.ENVIRONMENT_PRODUCTION_NAME }}
+        if: ${{ github.ref != 'refs/heads/master' && github.event.inputs.beanstalk_env != env.ENVIRONMENT_PRODUCTION_NAME }}
         uses: hmanzur/actions-aws-eb@v1.0.0
+        env: 
+          ENVIRONMENT_PRODUCTION_NAME: ${{ secrets.ENVIRONMENT_PRODUCTION_NAME }} 
         with:
           command: 'deploy ${{ github.event.inputs.beanstalk_env || secrets.ENVIRONMENT_STAGING_NAME }} --timeout 15'
 
@@ -120,4 +122,3 @@ jobs:
       with:
         environment: 'production'
         version: ${{ github.sha }}
-
