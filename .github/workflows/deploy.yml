@@ -7,13 +7,13 @@ on:
         description: Beanstalk environment (Optional - leave it blank to deploy to production)
         required: false
       run_tests: 
-        description: "Run tests (ignored on master branch: 1 = true, 0 = false)"
+        description: "Run tests (ignored on master branch)"
         required: true
-        default: 1
+        default: true
       
 jobs:
   tests:
-    if: ${{ github.ref == 'refs/heads/master' || github.event.inputs.run_tests }}
+    if: ${{ github.ref == 'refs/heads/master' || github.event.inputs.run_tests == 'false' }}
     runs-on: ubuntu-latest
 
     services:
