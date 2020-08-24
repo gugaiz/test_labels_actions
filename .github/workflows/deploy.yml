@@ -6,10 +6,10 @@ on:
       beanstalk_env:
         description: Beanstalk environment (Optional - leave it blank to deploy to production)
         required: false
-      skip_tests: 
-        description: "Skip tests (ignored on master branch)"
+      run_tests: 
+        description: "Run tests (ignored on master branch)"
         required: true
-        default: 'false'
+        default: true
       
 jobs:
   tests:
@@ -31,8 +31,9 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@v2
-      - name: "Setup ruby"
+      - name: Clone Repository
+        uses: actions/checkout@v2
+      - name: Setup ruby
         uses: ruby/setup-ruby@v1
       - uses: actions/cache@v2
         with:
