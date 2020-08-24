@@ -1,0 +1,135 @@
+name: deploy action
+
+on:
+  workflow_dispatch:
+    inputs:
+      backend_url:
+        description: Backend endpoint (Optional - leave it blank to use the default one)
+        required: false
+      dev_bucket_name:
+        description: Dev's bucket name (Optional - leave it blank for staging)
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+
+      - name: Set environment to production
+        if: ${{ github.ref == 'refs/heads/master' }}
+        run: |
+          echo "::set-env name=ENVIRONMENT::production"
+
+      - name: Set enviroment to staging
+        if: ${{ github.ref != 'refs/heads/master' }}
+        run: |
+          echo "::set-env name=ENVIRONMENT::staging"
+
+      - name: Start deployment
+        uses: bobheadxi/deployments@v0.4.2
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ env.ENVIRONMENT }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Cache Libs
+        id: cache-libs
+        uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            public
+          key: ${{ github.event.deployment.environment }}-cache
+
+      - name: Deploying to production
+        if: ${{ github.ref == 'refs/heads/master' && github.event.inputs.backend_url == '' }}
+        env:
+          GATSBY_API_URL: https://api.firstleaf.club
+          GATSBY_STRIPE_KEY: ${{secrets.GATSBY_STRIPE_KEY_PROD}}
+          GATSBY_COOKIES_SECURE: true
+          GATSBY_FONTS_LINK: https://cloud.typography.com/7410416/6307592/css/fonts.css
+          TARGET_ADDRESS: https://www.firstleaf.club
+          AWS_REGION: us-east-1
+          AWS_BUCKET: firstleaf-www-production
+          AWS_CLOUDFRONT_ID: E2I1QQQTLJBTWI
+          GATSBY_CONTENTFUL_SPACE_ID: ${{secrets.GATSBY_CONTENTFUL_SPACE_ID}}
+          GATSBY_CONTENTFUL_API_KEY: ${{secrets.GATSBY_CONTENTFUL_API_KEY_PROD}}
+          GATSBY_CONTENTFUL_PREVIEW_TOKEN: ${{secrets.GATSBY_CONTENTFUL_PREVIEW_TOKEN_PROD}}
+          GATSBY_CONTENTFUL_ENVIRONMENT: master
+          GATSBY_CONTENTFUL_QUIZ_SPACE_ID: ${{secrets.GATSBY_CONTENTFUL_QUIZ_SPACE_ID}}
+          GATSBY_CONTENTFUL_QUIZ_API_KEY: ${{secrets.GATSBY_CONTENTFUL_QUIZ_API_KEY_PROD}}
+          GATSBY_SNOWPLOW_COLLECTOR_URI: sp.firstleaf.club
+        run: |
+          [ `git ls-remote | head -1 | sed "s/HEAD//"` = $GITHUB_SHA ] || exit 1 && yarn && yarn test && yarn build:production && yarn deploy && yarn invalidatecache
+
+      - name: Update Sentry release
+        if: ${{ github.ref == 'refs/heads/master' && github.event.inputs.backend_url == '' }}
+        uses: dmandrade/sentry-release-github-action@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: 'penrose-hill'
+          SENTRY_PROJECT: 'gatsby'
+        with:
+          environment: 'production'
+          version: ${{ github.sha }}
+
+      - name: Deploying to staging
+        if: ${{ github.event.inputs.dev_bucket_name == '' && (github.ref != 'refs/heads/master' || github.event.inputs.backend_url != '') }}
+        env:
+          GATSBY_API_URL: ${{ github.event.inputs.backend_url || 'https://api.staging.firstleaf.club' }}
+          GATSBY_STRIPE_KEY: ${{secrets.GATSBY_STRIPE_KEY}}
+          GATSBY_COOKIES_SECURE: true
+          GATSBY_FONTS_LINK: https://cloud.typography.com/7410416/7443792/css/fonts.css
+          TARGET_ADDRESS: ${{   https://${{github.event.deployment.payload.user}}.dev.firstleaf.club || 
+          TARGET_ADDRESS: https://www.staging.firstleaf.club
+          AWS_REGION: us-east-1
+          AWS_BUCKET: firstleaf-www-${{github.event.deployment.payload.user}}
+          AWS_CLOUDFRONT_ID: E29S0Z9RV8WDST
+          GATSBY_CONTENTFUL_SPACE_ID: ${{secrets.GATSBY_CONTENTFUL_SPACE_ID}}
+          GATSBY_CONTENTFUL_API_KEY: ${{secrets.GATSBY_CONTENTFUL_API_KEY}}
+          GATSBY_CONTENTFUL_PREVIEW_TOKEN: ${{secrets.GATSBY_CONTENTFUL_PREVIEW_TOKEN}}
+          GATSBY_CONTENTFUL_ENVIRONMENT: development
+          GATSBY_CONTENTFUL_QUIZ_SPACE_ID: ${{secrets.GATSBY_CONTENTFUL_QUIZ_SPACE_ID}}
+          GATSBY_CONTENTFUL_QUIZ_API_KEY: ${{secrets.GATSBY_CONTENTFUL_QUIZ_API_KEY}}
+          GATSBY_SNOWPLOW_COLLECTOR_URI: com-penrosehill-prod1.mini.snplow.net
+        run: yarn && yarn build:staging && yarn deploy
+
+      - name: Deploying to dev bucket
+        if: ${{ github.event.inputs.dev_bucket_name != '' && (github.ref != 'refs/heads/master' || github.event.inputs.backend_url != '') }}
+        env:
+          GATSBY_API_URL: ${{ github.event.inputs.backend_url || 'https://api.staging.firstleaf.club' }}
+          GATSBY_STRIPE_KEY: ${{secrets.GATSBY_STRIPE_KEY}}
+          GATSBY_COOKIES_SECURE: true
+          GATSBY_FONTS_LINK: https://cloud.typography.com/7410416/7443792/css/fonts.css
+          TARGET_ADDRESS: https://${{github.event.inputs.backend_url}}.dev.firstleaf.club
+          AWS_REGION: us-east-1
+          AWS_BUCKET: firstleaf-www-${{github.event.inputs.backend_url}}
+          AWS_CLOUDFRONT_ID: E29S0Z9RV8WDST
+          GATSBY_CONTENTFUL_SPACE_ID: ${{secrets.GATSBY_CONTENTFUL_SPACE_ID}}
+          GATSBY_CONTENTFUL_API_KEY: ${{secrets.GATSBY_CONTENTFUL_API_KEY}}
+          GATSBY_CONTENTFUL_PREVIEW_TOKEN: ${{secrets.GATSBY_CONTENTFUL_PREVIEW_TOKEN}}
+          GATSBY_CONTENTFUL_ENVIRONMENT: development
+          GATSBY_CONTENTFUL_QUIZ_SPACE_ID: ${{secrets.GATSBY_CONTENTFUL_QUIZ_SPACE_ID}}
+          GATSBY_CONTENTFUL_QUIZ_API_KEY: ${{secrets.GATSBY_CONTENTFUL_QUIZ_API_KEY}}
+          GATSBY_SNOWPLOW_COLLECTOR_URI: com-penrosehill-prod1.mini.snplow.net
+        run: yarn && yarn build:staging && yarn deploy
+
+      - name: Update deployment status
+        uses: bobheadxi/deployments@v0.4.2
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
