@@ -36,22 +36,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           env: ${{ env.ENVIRONMENT }}
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Cache Libs
-        id: cache-libs
-        uses: actions/cache@v2
-        with:
-          path: |
-            node_modules
-            public
-          key: ${{ github.event.deployment.environment }}-cache
-
       - name: Deploying to production
         if: ${{ github.ref == 'refs/heads/master' && github.event.inputs.backend_url == '' }}
         env:
