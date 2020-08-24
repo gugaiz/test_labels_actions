@@ -91,7 +91,6 @@ jobs:
           GATSBY_STRIPE_KEY: ${{secrets.GATSBY_STRIPE_KEY}}
           GATSBY_COOKIES_SECURE: true
           GATSBY_FONTS_LINK: https://cloud.typography.com/7410416/7443792/css/fonts.css
-          TARGET_ADDRESS: ${{   https://${{github.event.deployment.payload.user}}.dev.firstleaf.club || 
           TARGET_ADDRESS: https://www.staging.firstleaf.club
           AWS_REGION: us-east-1
           AWS_BUCKET: firstleaf-www-${{github.event.deployment.payload.user}}
