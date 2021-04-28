@@ -1,0 +1,30 @@
+name: deploy main replica
+
+on:
+  workflow_dispatch: 
+    inputs:
+      invalidate_cache:
+        description: Invalidate GitHub Action cache
+        required: true
+        default: 'false'
+  workflow_run:
+    workflows: ["deploy action"]
+    branches:
+      - main
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    #if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.inputs.invalidate_cache > 0  }}
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Set environment to main replica
+        run: |
+          echo "ENVIRONMENT=main-replica" >> $GITHUB_ENV
+          echo "echo ${{ github.event.inputs.invalidate_cache }}"
